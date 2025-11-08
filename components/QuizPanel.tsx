@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { QuizQuestion } from '../types';
+// FIX: Updated service imports and removed useApiKey hook to align with API key guidelines.
 import { generateQuiz } from '../services/geminiService';
 import { SparklesIcon } from './icons/SparklesIcon';
 import { CheckCircleIcon } from './icons/CheckCircleIcon';
@@ -37,6 +38,7 @@ const getMotivationalQuote = (score: number, total: number): { quote: string; au
 
 
 export const QuizPanel: React.FC = () => {
+  // FIX: Removed useApiKey hook.
   const [state, setState] = useState<QuizState>('config');
   const [context, setContext] = useState('');
   const [numQuestions, setNumQuestions] = useState(5);
@@ -47,11 +49,13 @@ export const QuizPanel: React.FC = () => {
   const [error, setError] = useState('');
 
   const handleGenerateQuiz = useCallback(async () => {
+    // FIX: Removed API key from condition.
     if (!context.trim()) return;
 
     setState('loading');
     setError('');
     try {
+      // FIX: generateQuiz no longer requires an API key.
       const generatedQuestions = await generateQuiz(context, numQuestions);
       if (generatedQuestions.length > 0) {
         setQuestions(generatedQuestions);
@@ -64,9 +68,11 @@ export const QuizPanel: React.FC = () => {
       }
     } catch (err) {
       console.error(err);
-      setError('An error occurred while generating the quiz. Please check your text or try again later.');
+      // FIX: Updated error message as API key is no longer user-provided.
+      setError('An error occurred while generating the quiz. Please check your text and network connection, then try again.');
       setState('config');
     }
+    // FIX: Removed apiKey from dependency array.
   }, [context, numQuestions]);
 
   const handleAnswer = (optionIndex: number) => {
@@ -208,6 +214,7 @@ export const QuizPanel: React.FC = () => {
                 onChange={(e) => setContext(e.target.value)}
                 placeholder="Enter the text to generate a quiz from..."
                 className="flex-1 w-full p-4 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-primary focus:outline-none transition resize-none"
+                // FIX: Removed disabled check for API key.
               />
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -221,10 +228,12 @@ export const QuizPanel: React.FC = () => {
                   min="1"
                   max="10"
                   className="w-20 px-3 py-2 rounded-md bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-primary focus:outline-none"
+                  // FIX: Removed disabled check for API key.
                 />
               </div>
               <button
                 onClick={handleGenerateQuiz}
+                // FIX: Removed disabled check for API key.
                 disabled={!context.trim()}
                 className="w-full sm:w-auto bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-8 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >

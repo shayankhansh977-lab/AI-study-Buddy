@@ -1,8 +1,10 @@
 import React, { useState, useCallback } from 'react';
+// FIX: Updated service imports and removed useApiKey hook to align with API key guidelines.
 import { summarizeText } from '../services/geminiService';
 import { SparklesIcon } from './icons/SparklesIcon';
 
 export const SummarizePanel: React.FC = () => {
+  // FIX: Removed useApiKey hook.
   const [text, setText] = useState('');
   const [difficulty, setDifficulty] = useState('Intermediate');
   const [summary, setSummary] = useState('');
@@ -10,6 +12,7 @@ export const SummarizePanel: React.FC = () => {
   const [error, setError] = useState('');
 
   const handleSummarize = useCallback(async () => {
+    // FIX: Removed API key from condition.
     if (!text.trim() || isLoading) return;
 
     setIsLoading(true);
@@ -17,14 +20,17 @@ export const SummarizePanel: React.FC = () => {
     setSummary('');
 
     try {
+      // FIX: summarizeText no longer requires an API key.
       const result = await summarizeText(text, difficulty);
       setSummary(result);
     } catch (err) {
       console.error(err);
-      setError('Failed to generate summary. Please try again.');
+      // FIX: Updated error message as API key is no longer user-provided.
+      setError('Failed to generate summary. Please check your network connection or try again.');
     } finally {
       setIsLoading(false);
     }
+  // FIX: Removed apiKey from dependency array.
   }, [text, difficulty, isLoading]);
 
   return (
@@ -40,6 +46,7 @@ export const SummarizePanel: React.FC = () => {
             onChange={(e) => setText(e.target.value)}
             placeholder="Enter the text you want to summarize..."
             className="flex-1 p-4 w-full rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-primary focus:outline-none transition resize-none"
+            // FIX: Removed disabled check for API key.
           />
         </div>
         <div className="w-full md:w-1/2 flex flex-col">
@@ -69,6 +76,7 @@ export const SummarizePanel: React.FC = () => {
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value)}
               className="px-3 py-2 rounded-md bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-primary focus:outline-none"
+              // FIX: Removed disabled check for API key.
             >
               <option>Basic</option>
               <option>Intermediate</option>
@@ -77,6 +85,7 @@ export const SummarizePanel: React.FC = () => {
         </div>
         <button
           onClick={handleSummarize}
+          // FIX: Removed disabled check for API key.
           disabled={isLoading || !text.trim()}
           className="w-full sm:w-auto bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-8 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >

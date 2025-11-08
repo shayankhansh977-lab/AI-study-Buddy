@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Chat } from "@google/genai";
 import { ChatMessage } from '../types';
+// FIX: Updated service imports to use functions that don't require an API key parameter.
 import { createChat, sendMessage } from '../services/geminiService';
-import { SparklesIcon } from './icons/SparklesIcon';
 
 const UserMessage: React.FC<{ message: string }> = ({ message }) => (
   <div className="flex justify-end mb-4">
@@ -21,6 +21,7 @@ const AIMessage: React.FC<{ message: string }> = ({ message }) => (
 
 
 export const ChatPanel: React.FC = () => {
+  // FIX: Removed useApiKey hook as API key is now handled by the service layer.
   const [chat, setChat] = useState<Chat | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -28,10 +29,12 @@ export const ChatPanel: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // FIX: createChat no longer needs an API key.
     setChat(createChat());
     setMessages([
         { role: 'model', content: 'Hello! I am your AI Study Buddy. How can I help you with Physics, Chemistry, Math, or Literature today?' }
     ]);
+    // FIX: Dependency array is now empty as apiKey is no longer a dependency.
   }, []);
 
   useEffect(() => {
@@ -39,6 +42,7 @@ export const ChatPanel: React.FC = () => {
   }, [messages]);
 
   const handleSend = useCallback(async () => {
+    // FIX: Removed apiKey check.
     if (!input.trim() || isLoading || !chat) return;
 
     const userMessage: ChatMessage = { role: 'user', content: input };
@@ -47,16 +51,19 @@ export const ChatPanel: React.FC = () => {
     setIsLoading(true);
 
     try {
+      // FIX: sendMessage no longer needs an API key.
       const response = await sendMessage(chat, input);
       const aiMessage: ChatMessage = { role: 'model', content: response };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       console.error(error);
-      const errorMessage: ChatMessage = { role: 'model', content: 'Sorry, I encountered an error. Please try again.' };
+      // FIX: Updated error message as API key is no longer user-provided.
+      const errorMessage: ChatMessage = { role: 'model', content: 'Sorry, I encountered an error. This could be due to a misconfigured API key or a network issue. Please try again.' };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
+    // FIX: Removed apiKey from dependency array.
   }, [input, isLoading, chat]);
 
   return (
@@ -90,10 +97,12 @@ export const ChatPanel: React.FC = () => {
           onKeyPress={(e) => e.key === 'Enter' && handleSend()}
           placeholder="Ask a question..."
           className="flex-1 w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-primary focus:outline-none transition"
+          // FIX: Removed disabled check for apiKey.
           disabled={isLoading}
         />
         <button
           onClick={handleSend}
+          // FIX: Removed disabled check for apiKey.
           disabled={isLoading || !input.trim()}
           className="bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >

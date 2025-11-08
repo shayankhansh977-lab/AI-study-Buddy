@@ -1,14 +1,12 @@
 import { GoogleGenAI, Chat, GenerateContentResponse, Type } from "@google/genai";
 import { QuizQuestion } from '../types';
 
-const API_KEY = process.env.API_KEY;
+// FIX: Initialize GoogleGenAI once using the API key from environment variables.
+// This aligns with the coding guidelines, which mandate using `process.env.API_KEY`.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 
-if (!API_KEY) {
-  throw new Error("API_KEY environment variable not set");
-}
 
-const ai = new GoogleGenAI({ apiKey: API_KEY });
-
+// FIX: Removed apiKey parameter. The singleton 'ai' instance is used directly.
 export const createChat = (): Chat => {
   return ai.chats.create({
     model: 'gemini-2.5-flash',
@@ -18,11 +16,13 @@ export const createChat = (): Chat => {
   });
 };
 
+// FIX: Removed apiKey parameter.
 export const sendMessage = async (chat: Chat, message: string): Promise<string> => {
   const response: GenerateContentResponse = await chat.sendMessage({ message });
   return response.text;
 };
 
+// FIX: Removed apiKey parameter.
 export const summarizeText = async (text: string, difficulty: string): Promise<string> => {
   const prompt = `Summarize the following text at a ${difficulty} level. Focus on the key concepts and present them clearly.
 
@@ -39,6 +39,7 @@ ${text}
   return response.text;
 };
 
+// FIX: Removed apiKey parameter.
 export const generateQuiz = async (context: string, numQuestions: number): Promise<QuizQuestion[]> => {
   const quizSchema = {
     type: Type.ARRAY,
