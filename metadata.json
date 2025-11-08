@@ -1,0 +1,5 @@
+{
+  "name": "AI Study Chat Platform",
+  "description": "An interactive web application where students can chat with an AI tutor for help with academic subjects. The platform also offers note summarization and quiz generation to enhance the learning experience.",
+  "requestFramePermissions": []
+}
